@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { axiosInstance } from "@/lib/utils";
 import Navbar from "@/components/navbar";
 
@@ -10,9 +10,9 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
   const { storeId } = useParams() as { storeId: string };
-  const { userId } = useAuth();
+  const { userId } = await auth();
   const router = useRouter();
   const [store, setStore] = useState<{ name: string } | null>(null);
   const [loading, setLoading] = useState(true);
