@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { axiosInstance } from "@/lib/utils";
+import Navbar from "@/components/navbar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -55,7 +56,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">{store?.name}</h1>
+      <Navbar />
       {children}
     </div>
   );

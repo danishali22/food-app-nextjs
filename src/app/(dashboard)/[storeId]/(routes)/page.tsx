@@ -1,6 +1,10 @@
-const DashboardOverview = () => {
+interface DashboardOverviewProps {
+  params: {storeId: string}
+}
+
+const DashboardOverview = ({params}: DashboardOverviewProps) => {
   return (
-    <div>Dashboard Overview</div>
+    <div>Dashboard Overview - new2</div>
   )
 }
 

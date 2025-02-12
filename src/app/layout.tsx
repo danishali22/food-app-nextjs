@@ -33,9 +33,6 @@ export default function RootLayout({
           <SignedOut>
             <SignInButton />
           </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
           <ModalProvider />
           <ToastProvider />
           {children}

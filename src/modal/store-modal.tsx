@@ -33,6 +33,7 @@ export const StoreModal = () => {
           const response = await axios.post("/api/stores/create-store", data);
           if(response?.data?.success){
             toast.success(response?.data?.message || "Store created!");
+            window.location.assign(`${response?.data?.data?._id}`);
           }
         } catch (error) {
           toast.error("Something went wrong")
@@ -73,7 +74,12 @@ export const StoreModal = () => {
                 )}
               />
               <div className="pl-6 space-x-2 flex items-center justify-end w-full mt-2">
-                <Button type="button" variant={"outline"} size={"sm"}>
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  size={"sm"}
+                  onClick={storeModal.onClose}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isLoading} size={"sm"}>
