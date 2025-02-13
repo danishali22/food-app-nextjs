@@ -1,16 +1,15 @@
-import { auth } from "@clerk/nextjs/server";
+import { axiosInstance } from "@/lib/utils";
+import { Store } from "@/types/types-db";
+import { useAuth, UserButton } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import MainNav from "./main-nav";
 import StoreSwitcher from "./store-switcher";
-import { useEffect, useState } from "react";
-import { Store } from "@/types/types-db";
-import { useRouter } from "next/navigation";
-import { axiosInstance } from "@/lib/utils";
-import { UserButton } from "@clerk/nextjs";
 
-const Navbar = async() => {
+const Navbar = () => {
   const [stores, setStores] = useState<Store[]>([]);
   const router = useRouter();
-  const { userId } = await auth();
+  const { userId } = useAuth();
 
   useEffect(() => {
     if (!userId) {
@@ -33,8 +32,6 @@ const Navbar = async() => {
 
     fetchStores();
   }, []);
-
-  console.log("store", stores);
 
   return (
     <div className="border-b">

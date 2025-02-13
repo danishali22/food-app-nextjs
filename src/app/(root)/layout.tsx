@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth } from "@clerk/nextjs/server";
 import { useRouter } from "next/navigation";
 import { axiosInstance } from "@/lib/utils";
+import { useAuth } from "@clerk/nextjs";
 
 interface SetupLayoutProps {
   children: React.ReactNode;
 }
 
-const SetupLayout = async({ children }: SetupLayoutProps) => {
-  const { userId } = await auth();
+const SetupLayout = ({ children }: SetupLayoutProps) => {
+  const { userId } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
