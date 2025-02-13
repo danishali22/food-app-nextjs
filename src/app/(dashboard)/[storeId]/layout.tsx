@@ -18,15 +18,15 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!userId) {
-      router.push("/sign-in");
-      return;
-    }
+    // if (!userId) {
+    //   router.push("/sign-in");
+    //   return;
+    // }
 
-    if (!storeId) {
-      router.push("/");
-      return;
-    }
+    // if (!storeId) {
+    //   router.push("/");
+    //   return;
+    // }
 
     const fetchStore = async () => {
       try {

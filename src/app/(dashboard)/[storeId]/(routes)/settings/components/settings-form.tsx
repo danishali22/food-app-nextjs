@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Input } from "@/components/ui/input";
 import { axiosInstance } from "@/lib/utils";
 import toast from "react-hot-toast";
+import AlertModal from "@/modal/alert-modal";
 
 interface SettingsFormProps {
   initialData: Store;
@@ -33,6 +34,7 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
     });
 
     const [isLoading, setIsLoading] = useState(false);
+    const [open, setOpen] = useState(false);
     const params = useParams();
     const router = useRouter();
 
@@ -42,7 +44,6 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
             const response = await axiosInstance.patch(`/stores/${params.storeId}`, data);
             if(response?.data?.success){
                 toast.success(response?.data?.message || "Store updated!");
-                // router.refresh();
             }
         } catch (error) {
             console.error("Error fetching stores:", error);
@@ -52,11 +53,40 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
         }
     }
 
+    const onDelete = async() => {
+      console.log("click cndfm")
+        setIsLoading(true);
+        try {
+            const response = await axiosInstance.delete(`/stores/${params.storeId}`);
+            console.log("delete rspnse", response?.data)
+            if(response?.data?.success){
+                toast.success(response?.data?.message || "Store deleted!");
+                router.push("/");
+            }
+        } catch (error) {
+            console.error("Error fetching stores:", error);
+            toast.error("Something went wrong");
+        } finally {
+            setIsLoading(false);
+            setOpen(false);
+        }
+    }
+
   return (
     <>
+      <AlertModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={() => onDelete()}
+        loading={isLoading}
+      />
       <div className="flex items-center justify-center">
         <Heading title="Settings" description="Manage Store Preferences" />
-        <Button variant={"destructive"} size={"icon"}>
+        <Button
+          variant={"destructive"}
+          size={"icon"}
+          onClick={() => setOpen(true)}
+        >
           <Trash className="h-4 w-4" />
         </Button>
       </div>
@@ -73,7 +103,7 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Name</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input
                       disabled={isLoading}
