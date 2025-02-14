@@ -17,6 +17,7 @@ import { axiosInstance } from "@/lib/utils";
 import toast from "react-hot-toast";
 import AlertModal from "@/modal/alert-modal";
 import ApiAlert from "@/components/api-alert";
+import UseOrigin from "@/hooks/use-origin";
 
 interface SettingsFormProps {
   initialData: Store;
@@ -38,6 +39,7 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
     const [open, setOpen] = useState(false);
     const params = useParams();
     const router = useRouter();
+    const origin = UseOrigin();
 
     const onSubmit = async(data: z.infer<typeof formSchema>) => {
         setIsLoading(true);
@@ -129,7 +131,7 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
 
       <Separator />
             
-      <ApiAlert title="testing" description="testing desc" variant="public" />
+      <ApiAlert title="NEXT_PUBLIC_API_URL" description={`${origin}/api/${params.storeId}`} variant="public" />
 
     </>
   );
