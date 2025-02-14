@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { axiosInstance } from "@/lib/utils";
 import toast from "react-hot-toast";
 import AlertModal from "@/modal/alert-modal";
+import ApiAlert from "@/components/api-alert";
 
 interface SettingsFormProps {
   initialData: Store;
@@ -125,6 +126,11 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
           </Button>
         </form>
       </Form>
+
+      <Separator />
+            
+      <ApiAlert title="testing" description="testing desc" variant="public" />
+
     </>
   );
 };
