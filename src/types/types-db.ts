@@ -5,3 +5,11 @@ export interface Store {
     createdAt: Date,
     updatedAt: Date,
 }
+
+export interface BillBoard {
+    _id: string,
+    label: string,
+    imageUrl: string,
+    createdAt: Date,
+    updatedAt: Date,
+}

@@ -57,11 +57,9 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
     }
 
     const onDelete = async() => {
-      console.log("click cndfm")
         setIsLoading(true);
         try {
             const response = await axiosInstance.delete(`/stores/${params.storeId}`);
-            console.log("delete rspnse", response?.data)
             if(response?.data?.success){
                 toast.success(response?.data?.message || "Store deleted!");
                 router.push("/");

@@ -35,10 +35,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           storeId,
         });
 
-        if (!data?.data) {
-          router.push("/");
-          return;
-        }
+        // if (!data?.data) {
+        //   router.push("/");
+        //   return;
+        // }
 
         setStore(data?.data);
       } catch (error) {
