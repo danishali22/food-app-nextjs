@@ -9,7 +9,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import {
   Form,
   FormControl,
@@ -24,19 +23,21 @@ import AlertModal from "@/modal/alert-modal";
 import { BillBoard } from "@/types/types-db";
 import ImageUpload from "@/components/image-upload";
 
-interface BillboardsFormProps {
-  initialData: BillBoard;
-}
-
 const formSchema = z.object({
-  label: z.string().min(1),
-  imageUrl: z.string().min(1),
+  label: z.string().min(1, "Label is required"),
+  imageUrl: z.string().min(1, "Image is required"),
 });
+
+interface BillboardsFormProps {
+  initialData?: BillBoard | null;
+}
 
 const BillboardsForm = ({ initialData }: BillboardsFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData,
+    defaultValues: initialData
+      ? initialData
+      : { label: undefined, imageUrl: undefined },
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -47,25 +48,23 @@ const BillboardsForm = ({ initialData }: BillboardsFormProps) => {
   const title = initialData ? "Edit Billboard" : "Create Billboard";
   const description = initialData ? "Edit a Billboard" : "Add a new Billboard";
   const toastMessage = initialData ? "Billboard updated" : "Billboard Created";
-  const action = initialData ? "Save Changes" : "Create Billboard"
+  const action = initialData ? "Save Changes" : "Create Billboard";
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
-    let response;
     try {
-      if(initialData){
-        response = await axiosInstance.patch(
+      setIsLoading(true);
+      if (initialData) {
+        await axiosInstance.patch(
           `/${params.storeId}/billboards/${params.billboardId}`,
           data
         );
       } else {
-        response = await axiosInstance.post(`/${params.storeId}/billboards`, data);
+        await axiosInstance.post(`/${params.storeId}/billboards`, data);
       }
-      if (response?.data?.success) {
-        toast.success(response?.data?.message || "Billboard created!");
-      }
+      toast.success(toastMessage);
+      router.refresh();
+      router.push(`/${params.storeId}/billboards`);
     } catch (error) {
-      console.error("Error fetching billboard:", error);
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
@@ -73,17 +72,16 @@ const BillboardsForm = ({ initialData }: BillboardsFormProps) => {
   };
 
   const onDelete = async () => {
-    setIsLoading(true);
     try {
-      const response = await axiosInstance.delete(`/${params.storeId}/billboards/${params.billboardId}`);
-      if (response?.data?.success) {
-        toast.success(response?.data?.message || "Store deleted!");
-        router.refresh();
-        router.push(`/${params.storeId}/billboards`);
-      }
+      setIsLoading(true);
+      await axiosInstance.delete(
+        `/${params.storeId}/billboards/${params.billboardId}`
+      );
+      toast.success("Billboard deleted");
+      router.refresh();
+      router.push(`/${params.storeId}/billboards`);
     } catch (error) {
-      console.error("Error fetching stores:", error);
-      toast.error("Something went wrong");
+      toast.error("Make sure you removed all categories first");
     } finally {
       setIsLoading(false);
       setOpen(false);
@@ -95,15 +93,15 @@ const BillboardsForm = ({ initialData }: BillboardsFormProps) => {
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
-        onConfirm={() => onDelete()}
+        onConfirm={onDelete}
         loading={isLoading}
       />
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
           <Button
-            variant={"destructive"}
-            size={"icon"}
+            variant="destructive"
+            size="icon"
             onClick={() => setOpen(true)}
             disabled={isLoading}
           >
@@ -112,24 +110,28 @@ const BillboardsForm = ({ initialData }: BillboardsFormProps) => {
         )}
       </div>
       <Separator />
-
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full space-y-3"
+          className="space-y-8 w-full"
         >
           <FormField
             control={form.control}
             name="imageUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Billboard Image</FormLabel>
+                <FormLabel>Background image</FormLabel>
                 <FormControl>
-                  <ImageUpload value={field.value ? [field.value] : []} disabled={isLoading} onChange={(url)=>{field.onChange(url)}} onRemove={()=>{field.onChange("")}} />
+                  <ImageUpload
+                    value={field.value ? [field.value] : []}
+                    disabled={isLoading}
+                    onChange={(url) => field.onChange(url)}
+                    onRemove={() => field.onChange("")}
+                  />
                 </FormControl>
-                {form.formState.errors.label && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {form.formState.errors.label.message}
+                {form.formState.errors.imageUrl && (
+                  <p className="text-red-500 text-sm">
+                    {form.formState.errors.imageUrl.message}
                   </p>
                 )}
               </FormItem>
@@ -141,16 +143,16 @@ const BillboardsForm = ({ initialData }: BillboardsFormProps) => {
               name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Label</FormLabel>
                   <FormControl>
                     <Input
                       disabled={isLoading}
-                      placeholder="Your billboard label..."
+                      placeholder="Billboard label"
                       {...field}
                     />
                   </FormControl>
                   {form.formState.errors.label && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <p className="text-red-500 text-sm">
                       {form.formState.errors.label.message}
                     </p>
                   )}
@@ -158,8 +160,8 @@ const BillboardsForm = ({ initialData }: BillboardsFormProps) => {
               )}
             />
           </div>
-          <Button type="submit" disabled={isLoading} size={"sm"}>
-            Save Changes
+          <Button disabled={isLoading} className="ml-auto" type="submit">
+            {action}
           </Button>
         </form>
       </Form>

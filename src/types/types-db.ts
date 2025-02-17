@@ -9,7 +9,7 @@ export interface Store {
 export interface BillBoard {
     _id: string,
     label: string,
-    imageUrl: string,
+    imageUrl: string;
     createdAt: Date,
     updatedAt: Date,
 }

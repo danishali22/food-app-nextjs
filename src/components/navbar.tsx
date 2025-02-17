@@ -22,7 +22,6 @@ const Navbar = () => {
           userId,
         });
         if (data?.success) {
-          console.log(data);
           setStores(data?.data?.stores || []);
         }
       } catch (error) {

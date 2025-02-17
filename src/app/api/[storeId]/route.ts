@@ -20,10 +20,6 @@ export async function PATCH(req: Request, {params}: {params: {storeId: string}})
 
         const { name } = await req.json();
 
-        if (!name) {
-            return errorResponse("Store name is required");
-        }
-
         await dbConnect();
 
         const store = await StoreModel.findOne({_id: storeId, userId});
@@ -73,7 +69,7 @@ export async function DELETE(req: Request, {params}: {params: {storeId: string}}
 
         await StoreModel.deleteOne({ _id: storeId });
 
-        return successResponse("Store deleted successfully", 200, store);
+        return successResponse("Store deleted successfully", 200);
     } catch (error) {
         console.error(error);
         return errorResponse("Internal Server Error", 500);
